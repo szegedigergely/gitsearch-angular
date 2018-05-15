@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>GitSearch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="app.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+    <script src="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.4/TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.4/TimelineMax.min.js"></script>
+    <script src="scripts/MorphSVGPlugin.min.js"></script>
+</head>
+<body ng-app="gitSearchApp">
+    <div id="wrapper" ng-controller="mainCtrl">
+        <form id="search_bar">
+            <input id="search_input" type="text" placeholder="Search repo" autocomplete="off" ng-model="searchParam" />
+            <svg id="search_mag" version="1.1"
+            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
+            x="0px" y="0px" width="360px" height="360px" viewBox="0 0 360 360" enable-background="new 0 0 360 360" xml:space="preserve">
+                <defs>
+                    <style>.cls-1{fill:#ffffff;opacity:0.4;}.cls-2{fill:#fff;}</style>
+                </defs>
+                <path id="halo_circle" class="cls-1" d="M125,125a33.46,33.46,0,1,1,0-47.32A33.49,33.49,0,0,1,125,125Z" transform="translate(-1 -1)"/>
+                <path id="halo_crescent" class="cls-2" d="M48.93,48.71a126.5,126.5,0,0,0-37.09,92.08c-.17,0-5.38-51.39,36.2-93,41.32-41.32,92.7-36.6,93-36.2S90.12,7.53,48.93,48.71Z" transform="translate(-1 -1)"/>
+                <g id="magnifier" data-name="magnifier"><path class="cls-2" d="M356.8,340.94l-92.2-92.2a6.71,6.71,0,0,0-4.77-2l-5,0a.81.81,0,0,1-.6-1.37,145.26,145.26,0,0,0,38.41-97.21C293.36,67.13,227.06.56,146,1A145.8,145.8,0,0,0,1,146C.56,227.06,67.12,293.35,148.19,292.6a145.26,145.26,0,0,0,97.22-38.4.81.81,0,0,1,1.37.59c0,2,0,4.12,0,5.06a6.71,6.71,0,0,0,2,4.73l92.2,92.2a7.57,7.57,0,0,0,10.67,0l5.19-5.19A7.57,7.57,0,0,0,356.8,340.94Zm-210-70.76A123.37,123.37,0,1,1,270.17,146.8,123.37,123.37,0,0,1,146.8,270.17Z" transform="translate(-1 -1)"/></g>
+            </svg>
+            <button id="search_button" type="submit" ng-click="searchParam && search(searchParam)"></button>
+        </form>
+
+        <div id="no_match">Sorry<br/><small>no matches found</small><br/><big>:-(</big></div>
+
+        <div id="main_pane" ng-class="{'no-scroll': issues}">
+            <div id="result_list">
+                <div class="item" ng-repeat="item in list.items" ng-class="{'open': accordion.current == item.id}">
+                    <div class="header" ng-click="setAccordion(item.id)">
+                        <span class="item_title">{{ item.name }}&nbsp;<span class="item_owner"><i>by</i>&nbsp;{{ item.owner.login }}</span></span><span class="item_counter" title="{{ item.stargazers_count }} stargazers" >{{ item.stargazers_count }}&nbsp;<img class="icon" src="img/stargazers.svg"/></span>
+                    </div>
+                    <ul class="details">
+                        <li><span>Created:</span> {{ date(item.created_at) }}</li>
+                        <li><span>Last updated:</span> {{ date(item.updated_at) }}</li>
+                        <li><span>URL:</span>&nbsp;<a href="{{ item.html_url }}" target=_blank>{{ item.html_url }}</a></li>
+                        <li><span>Description:</span> {{ item.description }}</li>
+                        <li><span>Forks count:</span> {{ item.forks_count }}</li>
+                        <li><a href="#" ng-click="showIssues(item.full_name)">Show issues</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="overlay" ng-class="{'visible': issues}">
+        </div>
+        <div id="close_issues" ng-class="{'visible': issues}" ng-click="clearIssues()">
+        </div>
+        <div id="side_pane" ng-class="{'visible': issues}">
+            <div id="issues" ng-show="issues">
+                <h2><span>issues of</span> {{ currentRepo }}</h2>
+                <ul>
+                    <li ng-repeat="item in issues.items">
+                        <a href="{{item.html_url}}" target=_blank>{{item.title}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+            
+    </div>
+
+    <script>
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
